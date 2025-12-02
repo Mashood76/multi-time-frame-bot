@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Coin Multi-Timeframe Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Multi-Coin Multi-Timeframe Dashboard</h1>
+            <div class="controls">
+                <div class="coin-selector">
+                    <button class="coin-btn active" data-coin="BTCUSDT">BTC</button>
+                    <button class="coin-btn" data-coin="ETHUSDT">ETH</button>
+                    <button class="coin-btn" data-coin="SOLUSDT">SOL</button>
+                </div>
+                <div class="timeframe-selector">
+                    <button class="tf-btn" data-tf="1m">1m</button>
+                    <button class="tf-btn" data-tf="5m">5m</button>
+                    <button class="tf-btn active" data-tf="15m">15m</button>
+                    <button class="tf-btn" data-tf="1h">1h</button>
+                    <button class="tf-btn" data-tf="4h">4h</button>
+                    <button class="tf-btn" data-tf="1d">1D</button>
+                </div>
+            </div>
+            <div class="status">
+                <span id="connection-status">🔴 Disconnected</span>
+                <span id="current-symbol">BTCUSDT</span>
+                <span id="current-timeframe">15m</span>
+                <span id="last-update">Last Update: --</span>
+            </div>
+        </header>
+
+        <!-- Strategy Signals Section -->
+        <div class="strategies-section">
+            <h2>🎯 Trading Strategies - Signal Analysis</h2>
+            
+            <!-- Strategy 1: Volume Cluster Analysis -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣ Volume Cluster Analysis</h3>
+                    <div class="strategy-signal" id="signal-volume-cluster">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-volume-cluster" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-volume-cluster">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-volume-cluster">
+                    <div class="criterion">
+                        <span class="criterion-name">Price near High Volume Node:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume > 2x Average:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price at POC ±2%:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 2: Cumulative Delta -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>2️⃣ Cumulative Delta Strategy</h3>
+                    <div class="strategy-signal" id="signal-cumulative-delta">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-cumulative-delta" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-cumulative-delta">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-cumulative-delta">
+                    <div class="criterion">
+                        <span class="criterion-name">Cumulative Delta Positive:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Delta Increasing (Last 3 candles):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Buy Volume > Sell Volume:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 3: VWAP + Order Flow -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>3️⃣ VWAP + Order Flow</h3>
+                    <div class="strategy-signal" id="signal-vwap-flow">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-vwap-flow" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-vwap-flow">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-vwap-flow">
+                    <div class="criterion">
+                        <span class="criterion-name">Price above VWAP:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Order Flow Bullish (OB Imbalance > 10%):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Delta Positive:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 4: Liquidity Hunter -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>4️⃣ Liquidity Hunter</h3>
+                    <div class="strategy-signal" id="signal-liquidity-hunter">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-liquidity-hunter" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-liquidity-hunter">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-liquidity-hunter">
+                    <div class="criterion">
+                        <span class="criterion-name">Price near 24h High/Low:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Large Wall Detected:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Liquidity Imbalance > 1.5:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 5: Volume Profile POC -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>5️⃣ Volume Profile POC Strategy</h3>
+                    <div class="strategy-signal" id="signal-poc">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-poc" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-poc">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-poc">
+                    <div class="criterion">
+                        <span class="criterion-name">Price at POC ±1%:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price in Value Area (VAH-VAL):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Spike Detected:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 6: Delta Divergence -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>6️⃣ Delta Divergence</h3>
+                    <div class="strategy-signal" id="signal-delta-divergence">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-delta-divergence" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-delta-divergence">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-delta-divergence">
+                    <div class="criterion">
+                        <span class="criterion-name">Price Making Higher High:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Delta Making Lower High (Bearish Div):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Confirmation:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 7: Absorption & Exhaustion -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>7️⃣ Absorption & Exhaustion</h3>
+                    <div class="strategy-signal" id="signal-absorption">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-absorption" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-absorption">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-absorption">
+                    <div class="criterion">
+                        <span class="criterion-name">High Volume with Low Price Movement:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Large Orders at Level:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price Rejection Signal:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 8: Iceberg Order Detection -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>8️⃣ Iceberg Order Detection</h3>
+                    <div class="strategy-signal" id="signal-iceberg">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-iceberg" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-iceberg">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-iceberg">
+                    <div class="criterion">
+                        <span class="criterion-name">Repeated Same-Size Orders:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Order Book Imbalance > 20%:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Hidden Liquidity Detected:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 9: Open Interest + Delta -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>9️⃣ Open Interest + Delta</h3>
+                    <div class="strategy-signal" id="signal-oi-delta">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-oi-delta" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-oi-delta">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-oi-delta">
+                    <div class="criterion">
+                        <span class="criterion-name">OI Increasing with Price:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Funding Rate Positive:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Long/Short Ratio > 1:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 10: Volume Pressure Zones -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>🔟 Volume Pressure Zones</h3>
+                    <div class="strategy-signal" id="signal-pressure">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-pressure" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-pressure">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-pressure">
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Acceleration Detected:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price at Support/Resistance:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Breakout Probability > 60%:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 11: Smart Money Flow -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣1️⃣ Smart Money Flow</h3>
+                    <div class="strategy-signal" id="signal-smart-money">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-smart-money" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-smart-money">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-smart-money">
+                    <div class="criterion">
+                        <span class="criterion-name">Accumulation Phase Detected:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Hidden Buying (Price Stable, Volume High):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Institutional Footprint:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 12: Break of Structure (BOS) -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣2️⃣ Break of Structure (BOS)</h3>
+                    <div class="strategy-signal" id="signal-bos">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-bos" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-bos">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-bos">
+                    <div class="criterion">
+                        <span class="criterion-name">Higher High Formed:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Previous High Broken:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Confirmation:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 13: Fair Value Gap (FVG) -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣3️⃣ Fair Value Gap (FVG)</h3>
+                    <div class="strategy-signal" id="signal-fvg">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fvg" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-fvg">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-fvg">
+                    <div class="criterion">
+                        <span class="criterion-name">Gap Detected (3+ candles):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price Returning to Gap:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Gap Fill Probability > 70%:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 14: Change of Character (CHoCH) -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣4️⃣ Change of Character (CHoCH)</h3>
+                    <div class="strategy-signal" id="signal-choch">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-choch" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-choch">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-choch">
+                    <div class="criterion">
+                        <span class="criterion-name">Trend Reversal Signal:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Lower Low Broken (Bullish CHoCH):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Spike on Break:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 15: Market Structure Shift (MSS) -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣5️⃣ Market Structure Shift (MSS)</h3>
+                    <div class="strategy-signal" id="signal-mss">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-mss" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-mss">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-mss">
+                    <div class="criterion">
+                        <span class="criterion-name">Strong Trend Break:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Multiple Swing Points Broken:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Momentum Shift Confirmed:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 16: Order Blocks (OB) -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣6️⃣ Order Blocks (OB)</h3>
+                    <div class="strategy-signal" id="signal-order-blocks">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-order-blocks" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-order-blocks">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-order-blocks">
+                    <div class="criterion">
+                        <span class="criterion-name">Bullish Order Block Identified:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price Testing OB Zone:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Reaction from OB (Volume):</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 17: Liquidity Sweep -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣7️⃣ Liquidity Sweep</h3>
+                    <div class="strategy-signal" id="signal-liquidity-sweep">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-liquidity-sweep" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-liquidity-sweep">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-liquidity-sweep">
+                    <div class="criterion">
+                        <span class="criterion-name">Stop Hunt Above/Below High/Low:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Quick Reversal After Sweep:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Volume Spike on Sweep:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Strategy 18: Inducement & Mitigation -->
+            <div class="strategy-card">
+                <div class="strategy-header">
+                    <h3>1️⃣8️⃣ Inducement & Mitigation</h3>
+                    <div class="strategy-signal" id="signal-inducement">
+                        <span class="signal-badge">ANALYZING...</span>
+                    </div>
+                </div>
+                <div class="strategy-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-inducement" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progress-text-inducement">0% Complete</span>
+                </div>
+                <div class="strategy-criteria" id="criteria-inducement">
+                    <div class="criterion">
+                        <span class="criterion-name">Inducement Level Created:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Price Mitigating OB/FVG:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                    <div class="criterion">
+                        <span class="criterion-name">Smart Money Reversal:</span>
+                        <span class="criterion-status">⏳ Checking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multi-Timeframe Analysis Grid -->
+        <div class="tf-grid">
+            <div class="tf-card" data-tf="1m">
+                <h3>1 Minute</h3>
+                <div class="tf-values">
+                    <div><span>VWAP:</span> <span class="tf-vwap-1m">--</span></div>
+                    <div><span>POC:</span> <span class="tf-poc-1m">--</span></div>
+                    <div><span>Delta:</span> <span class="tf-delta-1m">--</span></div>
+                    <div><span>Trend:</span> <span class="tf-trend-1m">--</span></div>
+                </div>
+            </div>
+            <div class="tf-card" data-tf="5m">
+                <h3>5 Minutes</h3>
+                <div class="tf-values">
+                    <div><span>VWAP:</span> <span class="tf-vwap-5m">--</span></div>
+                    <div><span>POC:</span> <span class="tf-poc-5m">--</span></div>
+                    <div><span>Delta:</span> <span class="tf-delta-5m">--</span></div>
+                    <div><span>Trend:</span> <span class="tf-trend-5m">--</span></div>
+                </div>
+            </div>
+            <div class="tf-card active" data-tf="15m">
+                <h3>15 Minutes</h3>
+                <div class="tf-values">
+                    <div><span>VWAP:</span> <span class="tf-vwap-15m">--</span></div>
+                    <div><span>POC:</span> <span class="tf-poc-15m">--</span></div>
+                    <div><span>Delta:</span> <span class="tf-delta-15m">--</span></div>
+                    <div><span>Trend:</span> <span class="tf-trend-15m">--</span></div>
+                </div>
+            </div>
+            <div class="tf-card" data-tf="1h">
+                <h3>1 Hour</h3>
+                <div class="tf-values">
+                    <div><span>VWAP:</span> <span class="tf-vwap-1h">--</span></div>
+                    <div><span>POC:</span> <span class="tf-poc-1h">--</span></div>
+                    <div><span>Delta:</span> <span class="tf-delta-1h">--</span></div>
+                    <div><span>Trend:</span> <span class="tf-trend-1h">--</span></div>
+                </div>
+            </div>
+            <div class="tf-card" data-tf="4h">
+                <h3>4 Hours</h3>
+                <div class="tf-values">
+                    <div><span>VWAP:</span> <span class="tf-vwap-4h">--</span></div>
+                    <div><span>POC:</span> <span class="tf-poc-4h">--</span></div>
+                    <div><span>Delta:</span> <span class="tf-delta-4h">--</span></div>
+                    <div><span>Trend:</span> <span class="tf-trend-4h">--</span></div>
+                </div>
+            </div>
+            <div class="tf-card" data-tf="1d">
+                <h3>1 Day</h3>
+                <div class="tf-values">
+                    <div><span>VWAP:</span> <span class="tf-vwap-1d">--</span></div>
+                    <div><span>POC:</span> <span class="tf-poc-1d">--</span></div>
+                    <div><span>Delta:</span> <span class="tf-delta-1d">--</span></div>
+                    <div><span>Trend:</span> <span class="tf-trend-1d">--</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <!-- Price Data Section -->
+            <div class="card">
+                <h2>💰 Price Data</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">Current Price:</span>
+                        <span class="value" id="current-price">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Open:</span>
+                        <span class="value" id="open-price">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">High:</span>
+                        <span class="value" id="high-price">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Low:</span>
+                        <span class="value" id="low-price">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">24h Change:</span>
+                        <span class="value" id="price-change">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volume Data Section -->
+            <div class="card">
+                <h2>📈 Volume Data</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">Total Volume (24h):</span>
+                        <span class="value" id="total-volume">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Buy Volume:</span>
+                        <span class="value green" id="buy-volume">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Sell Volume:</span>
+                        <span class="value red" id="sell-volume">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Volume Delta:</span>
+                        <span class="value" id="volume-delta">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Cumulative Delta:</span>
+                        <span class="value" id="cumulative-delta">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Book Section -->
+            <div class="card">
+                <h2>📖 Order Book (Top 5)</h2>
+                <div class="orderbook">
+                    <div class="asks">
+                        <h3>Asks (Sell Orders)</h3>
+                        <table id="asks-table">
+                            <thead>
+                                <tr>
+                                    <th>Price</th>
+                                    <th>Size</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="spread">
+                        <span>Spread: <strong id="spread">--</strong></span>
+                    </div>
+                    <div class="bids">
+                        <h3>Bids (Buy Orders)</h3>
+                        <table id="bids-table">
+                            <thead>
+                                <tr>
+                                    <th>Price</th>
+                                    <th>Size</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculated Values Section -->
+            <div class="card">
+                <h2>🧮 Calculated Values (Current TF)</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">VWAP:</span>
+                        <span class="value" id="vwap">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Price vs VWAP:</span>
+                        <span class="value" id="vwap-deviation">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Order Book Imbalance:</span>
+                        <span class="value" id="ob-imbalance">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Volume MA (20):</span>
+                        <span class="value" id="volume-ma">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">POC (Point of Control):</span>
+                        <span class="value" id="poc">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Price vs POC:</span>
+                        <span class="value" id="poc-deviation">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volume Profile Section -->
+            <div class="card">
+                <h2>📊 Volume Profile & Clusters</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">Value Area High (VAH):</span>
+                        <span class="value" id="vah">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Value Area Low (VAL):</span>
+                        <span class="value" id="val">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">High Volume Node:</span>
+                        <span class="value" id="hvn">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Low Volume Node:</span>
+                        <span class="value" id="lvn">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Volume Spike Detected:</span>
+                        <span class="value" id="volume-spike">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liquidity & Walls Section -->
+            <div class="card">
+                <h2>💧 Liquidity Analysis</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">Total Bid Liquidity:</span>
+                        <span class="value green" id="total-bid-liq">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Total Ask Liquidity:</span>
+                        <span class="value red" id="total-ask-liq">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Largest Bid Wall:</span>
+                        <span class="value" id="largest-bid-wall">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Largest Ask Wall:</span>
+                        <span class="value" id="largest-ask-wall">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Liquidity Ratio (Bid/Ask):</span>
+                        <span class="value" id="liq-ratio">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Market Structure Section -->
+            <div class="card">
+                <h2>🏗️ Market Structure</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">24h High (Resistance):</span>
+                        <span class="value" id="resistance">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">24h Low (Support):</span>
+                        <span class="value" id="support">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Distance to Resistance:</span>
+                        <span class="value" id="dist-resistance">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Distance to Support:</span>
+                        <span class="value" id="dist-support">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Trend Direction:</span>
+                        <span class="value" id="trend">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FVG Gaps Section -->
+            <div class="card">
+                <h2>📊 Fair Value Gaps (FVG)</h2>
+                <div class="timeframe-tabs">
+                    <button class="tab-btn active" data-tab="fvg-15m">15m</button>
+                    <button class="tab-btn" data-tab="fvg-1h">1h</button>
+                    <button class="tab-btn" data-tab="fvg-4h">4h</button>
+                </div>
+                <div class="tab-content active" id="fvg-15m">
+                    <div class="fvg-list" id="fvg-list-15m">
+                        <div class="fvg-item">Calculating...</div>
+                    </div>
+                </div>
+                <div class="tab-content" id="fvg-1h">
+                    <div class="fvg-list" id="fvg-list-1h">
+                        <div class="fvg-item">Calculating...</div>
+                    </div>
+                </div>
+                <div class="tab-content" id="fvg-4h">
+                    <div class="fvg-list" id="fvg-list-4h">
+                        <div class="fvg-item">Calculating...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Blocks Section -->
+            <div class="card">
+                <h2>🟦 Order Blocks</h2>
+                <div class="timeframe-tabs">
+                    <button class="tab-btn active" data-tab="ob-15m">15m</button>
+                    <button class="tab-btn" data-tab="ob-1h">1h</button>
+                    <button class="tab-btn" data-tab="ob-4h">4h</button>
+                </div>
+                <div class="tab-content active" id="ob-15m">
+                    <div class="ob-list" id="ob-list-15m">
+                        <div class="ob-item">Calculating...</div>
+                    </div>
+                </div>
+                <div class="tab-content" id="ob-1h">
+                    <div class="ob-list" id="ob-list-1h">
+                        <div class="ob-item">Calculating...</div>
+                    </div>
+                </div>
+                <div class="tab-content" id="ob-4h">
+                    <div class="ob-list" id="ob-list-4h">
+                        <div class="ob-item">Calculating...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liquidity Levels Section -->
+            <div class="card">
+                <h2>💧 Liquidity Levels</h2>
+                <div class="values">
+                    <div class="liquidity-item">
+                        <span class="liq-label">Buy-Side Liquidity (BSL):</span>
+                        <span class="liq-value" id="bsl-level">--</span>
+                        <span class="liq-distance" id="bsl-distance">--</span>
+                    </div>
+                    <div class="liquidity-item">
+                        <span class="liq-label">Sell-Side Liquidity (SSL):</span>
+                        <span class="liq-value" id="ssl-level">--</span>
+                        <span class="liq-distance" id="ssl-distance">--</span>
+                    </div>
+                    <div class="liquidity-item">
+                        <span class="liq-label">Equal Highs:</span>
+                        <span class="liq-value" id="eq-highs">--</span>
+                        <span class="liq-status sweep">Sweep Target</span>
+                    </div>
+                    <div class="liquidity-item">
+                        <span class="liq-label">Equal Lows:</span>
+                        <span class="liq-value" id="eq-lows">--</span>
+                        <span class="liq-status sweep">Sweep Target</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Market Structure Breaks Section -->
+            <div class="card">
+                <h2>🔄 Structure Breaks (BOS/CHoCH/MSS)</h2>
+                <div class="structure-list" id="structure-breaks">
+                    <div class="structure-item">Calculating...</div>
+                </div>
+            </div>
+
+            <!-- Derivatives Data Section -->
+            <div class="card">
+                <h2>📈 Futures & Derivatives</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">Open Interest:</span>
+                        <span class="value" id="open-interest">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">OI Change (24h):</span>
+                        <span class="value" id="oi-change">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Funding Rate:</span>
+                        <span class="value" id="funding-rate">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Next Funding (Time):</span>
+                        <span class="value" id="next-funding">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Long/Short Ratio:</span>
+                        <span class="value" id="long-short-ratio">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Market Sentiment Section -->
+            <div class="card">
+                <h2>😱 Market Sentiment</h2>
+                <div class="values">
+                    <div class="value-item">
+                        <span class="label">Fear & Greed Index:</span>
+                        <span class="value" id="fear-greed">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Market Sentiment:</span>
+                        <span class="value" id="sentiment">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">24h Liquidations (Long):</span>
+                        <span class="value red" id="liq-long">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">24h Liquidations (Short):</span>
+                        <span class="value green" id="liq-short">--</span>
+                    </div>
+                    <div class="value-item">
+                        <span class="label">Total Liquidations:</span>
+                        <span class="value" id="total-liq">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Trades Section -->
+            <div class="card">
+                <h2>⚡ Recent Trades (Last 10)</h2>
+                <table id="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Price</th>
+                            <th>Size</th>
+                            <th>Side</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
