@@ -367,43 +367,43 @@ function calculateRSI(data, period = 14) {
     return rsi;
 }
 
-// Timeframe-specific thresholds
+// Timeframe-specific thresholds - INCREASED SENSITIVITY
 const TIMEFRAME_THRESHOLDS = {
     '1m': {
-        rsi: { oversold: 10, overbought: 90 },
-        volumeMultiplier: 3,
-        pocDeviation: 1,
-        vwapDeviation: 0.5
+        rsi: { oversold: 24, overbought: 76 },  // More sensitive
+        volumeMultiplier: 1.5,  // Lower threshold
+        pocDeviation: 2.5,  // Wider range
+        vwapDeviation: 1.5  // Wider range
     },
     '5m': {
-        rsi: { oversold: 15, overbought: 85 },
-        volumeMultiplier: 2.5,
-        pocDeviation: 1.5,
-        vwapDeviation: 0.8
-    },
-    '15m': {
-        rsi: { oversold: 20, overbought: 80 },
-        volumeMultiplier: 2,
-        pocDeviation: 2,
-        vwapDeviation: 1
-    },
-    '1h': {
-        rsi: { oversold: 25, overbought: 75 },
-        volumeMultiplier: 2,
-        pocDeviation: 2.5,
-        vwapDeviation: 1.5
-    },
-    '4h': {
-        rsi: { oversold: 30, overbought: 70 },
-        volumeMultiplier: 1.8,
+        rsi: { oversold: 26, overbought: 74 },
+        volumeMultiplier: 1.5,
         pocDeviation: 3,
         vwapDeviation: 2
     },
-    '1d': {
-        rsi: { oversold: 35, overbought: 65 },
-        volumeMultiplier: 1.5,
+    '15m': {
+        rsi: { oversold: 28, overbought: 72 },
+        volumeMultiplier: 1.4,
         pocDeviation: 3.5,
         vwapDeviation: 2.5
+    },
+    '1h': {
+        rsi: { oversold: 30, overbought: 70 },
+        volumeMultiplier: 1.4,
+        pocDeviation: 4,
+        vwapDeviation: 3
+    },
+    '4h': {
+        rsi: { oversold: 32, overbought: 68 },
+        volumeMultiplier: 1.3,
+        pocDeviation: 4.5,
+        vwapDeviation: 3.5
+    },
+    '1d': {
+        rsi: { oversold: 35, overbought: 65 },
+        volumeMultiplier: 1.2,
+        pocDeviation: 5,
+        vwapDeviation: 4
     }
 };
 
@@ -1129,7 +1129,7 @@ function analyzeVolumeCluster() {
         
         if (currentPrice && hvnPrice && !isNaN(currentPrice) && !isNaN(hvnPrice)) {
             const hvnDiff = Math.abs((currentPrice - hvnPrice) / currentPrice * 100);
-            criteria.nearHVN = hvnDiff < 2; // Within 2%
+            criteria.nearHVN = hvnDiff < 3.5; // Within 3.5% - MORE SENSITIVE
             if (criteria.nearHVN) metCount++;
         }
         
@@ -1138,11 +1138,11 @@ function analyzeVolumeCluster() {
         criteria.volumeSpike = volumeSpikeText.includes('YES') || volumeSpikeText.includes('🚨');
         if (criteria.volumeSpike) metCount++;
         
-        // Check 3: Price at POC ±2%
+        // Check 3: Price at POC ±3.5%
         const pocPrice = elements.poc ? parseFloat(elements.poc.textContent.replace('$', '')) : 0;
         if (currentPrice && pocPrice && !isNaN(pocPrice)) {
             const pocDiff = Math.abs((currentPrice - pocPrice) / currentPrice * 100);
-            criteria.nearPOC = pocDiff < 2;
+            criteria.nearPOC = pocDiff < 3.5; // MORE SENSITIVE
             if (criteria.nearPOC) metCount++;
         }
     } catch (error) {
@@ -1214,9 +1214,9 @@ function analyzeVWAPFlow() {
         criteria.aboveVWAP = !isNaN(vwapDev) && vwapDev > 0;
         if (criteria.aboveVWAP) metCount++;
         
-        // Check 2: Order Flow Bullish (OB Imbalance > 10%)
+        // Check 2: Order Flow Bullish (OB Imbalance > 5%) - MORE SENSITIVE
         const obImbalance = elements.obImbalance ? parseFloat(elements.obImbalance.textContent.replace(/[^0-9.-]/g, '')) : 0;
-        criteria.bullishFlow = !isNaN(obImbalance) && obImbalance > 10;
+        criteria.bullishFlow = !isNaN(obImbalance) && obImbalance > 5;
         if (criteria.bullishFlow) metCount++;
         
         // Check 3: Volume Delta Positive
@@ -1257,7 +1257,7 @@ function analyzeLiquidityHunter() {
         if (currentPrice && high && low && !isNaN(currentPrice) && !isNaN(high) && !isNaN(low)) {
             const distToHigh = Math.abs((high - currentPrice) / currentPrice * 100);
             const distToLow = Math.abs((currentPrice - low) / currentPrice * 100);
-            criteria.nearExtreme = distToHigh < 2 || distToLow < 2; // Within 2%
+            criteria.nearExtreme = distToHigh < 4 || distToLow < 4; // Within 4% - MORE SENSITIVE
             if (criteria.nearExtreme) metCount++;
         }
         
@@ -1267,10 +1267,10 @@ function analyzeLiquidityHunter() {
         criteria.largeWall = largestBidText !== '--' && largestAskText !== '--';
         if (criteria.largeWall) metCount++;
         
-        // Check 3: Liquidity Imbalance > 1.5
+        // Check 3: Liquidity Imbalance > 1.2 - MORE SENSITIVE
         const liqRatio = elements.liqRatio ? parseFloat(elements.liqRatio.textContent) : 0;
         if (liqRatio && !isNaN(liqRatio)) {
-            criteria.liqImbalance = liqRatio > 1.5 || liqRatio < 0.67;
+            criteria.liqImbalance = liqRatio > 1.2 || liqRatio < 0.83;
             if (criteria.liqImbalance) metCount++;
         }
     } catch (error) {
@@ -1299,13 +1299,13 @@ function analyzePOCStrategy() {
     const totalCriteria = 3;
     
     try {
-        // Check 1: Price at POC ±1%
+        // Check 1: Price at POC ±2.5% - MORE SENSITIVE
         const currentPrice = elements.currentPrice ? parseFloat(elements.currentPrice.textContent.replace('$', '')) : 0;
         const pocPrice = elements.poc ? parseFloat(elements.poc.textContent.replace('$', '')) : 0;
         
         if (currentPrice && pocPrice && !isNaN(currentPrice) && !isNaN(pocPrice)) {
             const pocDiff = Math.abs((currentPrice - pocPrice) / currentPrice * 100);
-            criteria.atPOC = pocDiff < 1;
+            criteria.atPOC = pocDiff < 2.5;
             if (criteria.atPOC) metCount++;
         }
         
@@ -1496,9 +1496,9 @@ function analyzeIceberg() {
         criteria.repeatedOrders = largestBidText !== '--' && largestBidText.includes('@');
         if (criteria.repeatedOrders) metCount++;
         
-        // Check 2: Order book imbalance > 20%
+        // Check 2: Order book imbalance > 12% - MORE SENSITIVE
         const obImbalance = elements.obImbalance ? parseFloat(elements.obImbalance.textContent.replace(/[^0-9.-]/g, '')) : 0;
-        criteria.obImbalance = Math.abs(obImbalance) > 20;
+        criteria.obImbalance = Math.abs(obImbalance) > 12;
         if (criteria.obImbalance) metCount++;
         
         // Check 3: Hidden liquidity (high liquidity ratio)
@@ -1579,10 +1579,10 @@ function analyzeVolumePressure() {
         criteria.volumeAccel = volumeSpikeText.includes('YES') || volumeSpikeText.includes('🚨');
         if (criteria.volumeAccel) metCount++;
         
-        // Check 2: Price at support/resistance
+        // Check 2: Price at support/resistance - MORE SENSITIVE
         const distResistance = elements.distResistance ? parseFloat(elements.distResistance.textContent.replace('%', '')) : 100;
         const distSupport = elements.distSupport ? parseFloat(elements.distSupport.textContent.replace('%', '')) : 100;
-        criteria.atSupportResistance = distResistance < 3 || distSupport < 3;
+        criteria.atSupportResistance = distResistance < 5 || distSupport < 5;
         if (criteria.atSupportResistance) metCount++;
         
         // Check 3: Breakout probability (volume + price near level)
@@ -1612,10 +1612,10 @@ function analyzeSmartMoney() {
     const totalCriteria = 3;
     
     try {
-        // Check 1: Accumulation phase (low price movement, high volume)
+        // Check 1: Accumulation phase (low price movement, high volume) - MORE SENSITIVE
         const priceChange = elements.priceChange ? parseFloat(elements.priceChange.textContent.replace(/[^0-9.-]/g, '')) : 0;
         const volumeSpikeText = elements.volumeSpike ? elements.volumeSpike.textContent : '';
-        criteria.accumulation = Math.abs(priceChange) < 2 && (volumeSpikeText.includes('YES') || volumeSpikeText.includes('🚨'));
+        criteria.accumulation = Math.abs(priceChange) < 3 && (volumeSpikeText.includes('YES') || volumeSpikeText.includes('🚨'));
         if (criteria.accumulation) metCount++;
         
         // Check 2: Hidden buying (price stable, volume high, delta positive)
@@ -1690,14 +1690,14 @@ function analyzeFVG() {
     const totalCriteria = 3;
     
     try {
-        // Check 1: Gap detected (simplified: large price movement)
+        // Check 1: Gap detected (simplified: large price movement) - MORE SENSITIVE
         const priceChange = elements.priceChange ? parseFloat(elements.priceChange.textContent.replace(/[^0-9.-]/g, '')) : 0;
-        criteria.gapDetected = Math.abs(priceChange) > 3; // >3% move indicates potential gap
+        criteria.gapDetected = Math.abs(priceChange) > 1.5; // >1.5% move indicates potential gap
         if (criteria.gapDetected) metCount++;
         
-        // Check 2: Price returning to gap (price near VWAP or POC)
+        // Check 2: Price returning to gap (price near VWAP or POC) - MORE SENSITIVE
         const vwapDev = elements.vwapDeviation ? parseFloat(elements.vwapDeviation.textContent.replace(/[^0-9.-]/g, '')) : 0;
-        criteria.priceReturning = Math.abs(vwapDev) < 2; // Within 2% of VWAP
+        criteria.priceReturning = Math.abs(vwapDev) < 3.5; // Within 3.5% of VWAP
         if (criteria.priceReturning) metCount++;
         
         // Check 3: Gap fill probability (volume + price action)
@@ -1733,12 +1733,12 @@ function analyzeCHoCH() {
         const currentPrice = elements.currentPrice ? parseFloat(elements.currentPrice.textContent.replace('$', '')) : 0;
         const lowPrice = elements.lowPrice ? parseFloat(elements.lowPrice.textContent.replace('$', '')) : 0;
         
-        criteria.trendReversal = priceChange > 2 && currentPrice > lowPrice * 1.02; // 2% above low
+        criteria.trendReversal = priceChange > 1 && currentPrice > lowPrice * 1.01; // 1% above low - MORE SENSITIVE
         if (criteria.trendReversal) metCount++;
         
-        // Check 2: Lower low broken (bullish CHoCH)
+        // Check 2: Lower low broken (bullish CHoCH) - MORE SENSITIVE
         const distSupport = elements.distSupport ? parseFloat(elements.distSupport.textContent.replace('%', '')) : 100;
-        criteria.lowerLowBroken = distSupport > 3; // Price moved away from support
+        criteria.lowerLowBroken = distSupport > 1.5; // Price moved away from support
         if (criteria.lowerLowBroken) metCount++;
         
         // Check 3: Volume spike on break
@@ -1769,15 +1769,15 @@ function analyzeMSS() {
     const totalCriteria = 3;
     
     try {
-        // Check 1: Strong trend break (large price change)
+        // Check 1: Strong trend break (large price change) - MORE SENSITIVE
         const priceChange = elements.priceChange ? parseFloat(elements.priceChange.textContent.replace(/[^0-9.-]/g, '')) : 0;
-        criteria.strongBreak = Math.abs(priceChange) > 5; // >5% move
+        criteria.strongBreak = Math.abs(priceChange) > 2.5; // >2.5% move
         if (criteria.strongBreak) metCount++;
         
-        // Check 2: Multiple swing points broken (price far from both high and low)
+        // Check 2: Multiple swing points broken (price far from both high and low) - MORE SENSITIVE
         const distResistance = elements.distResistance ? parseFloat(elements.distResistance.textContent.replace('%', '')) : 100;
         const distSupport = elements.distSupport ? parseFloat(elements.distSupport.textContent.replace('%', '')) : 100;
-        criteria.multipleSwings = distResistance > 5 && distSupport > 5;
+        criteria.multipleSwings = distResistance > 2.5 && distSupport > 2.5;
         if (criteria.multipleSwings) metCount++;
         
         // Check 3: Momentum shift (volume + delta)
@@ -1809,15 +1809,15 @@ function analyzeOrderBlocks() {
     const totalCriteria = 3;
     
     try {
-        // Check 1: Bullish order block (price near support with large orders)
+        // Check 1: Bullish order block (price near support with large orders) - MORE SENSITIVE
         const distSupport = elements.distSupport ? parseFloat(elements.distSupport.textContent.replace('%', '')) : 100;
         const largestBidText = elements.largestBidWall ? elements.largestBidWall.textContent : '--';
-        criteria.obIdentified = distSupport < 3 && largestBidText !== '--';
+        criteria.obIdentified = distSupport < 5 && largestBidText !== '--';
         if (criteria.obIdentified) metCount++;
         
-        // Check 2: Price testing OB zone (near support/POC)
+        // Check 2: Price testing OB zone (near support/POC) - MORE SENSITIVE
         const pocDev = elements.pocDeviation ? parseFloat(elements.pocDeviation.textContent.replace(/[^0-9.-]/g, '')) : 100;
-        criteria.priceTesting = Math.abs(pocDev) < 2 || distSupport < 2;
+        criteria.priceTesting = Math.abs(pocDev) < 3.5 || distSupport < 3.5;
         if (criteria.priceTesting) metCount++;
         
         // Check 3: Reaction from OB (volume spike)
@@ -1924,6 +1924,25 @@ function analyzeInducement() {
     }, metCount, totalCriteria, progress);
 }
 
+// Global signal tracking for multi-timeframe analysis
+let globalSignals = {
+    '15m': { buy: 0, sell: 0, neutral: 0, total: 18 },
+    '1h': { buy: 0, sell: 0, neutral: 0, total: 18 },
+    '4h': { buy: 0, sell: 0, neutral: 0, total: 18 },
+    '1d': { buy: 0, sell: 0, neutral: 0, total: 18 }
+};
+
+// Get current signal for a strategy
+function getStrategySignal(strategyId) {
+    const signalBadge = document.querySelector(`#signal-${strategyId} .signal-badge`);
+    if (!signalBadge) return 'neutral';
+    
+    const text = signalBadge.textContent;
+    if (text.includes('BUY')) return 'buy';
+    if (text.includes('SELL')) return 'sell';
+    return 'neutral';
+}
+
 // Run all strategy analyses
 function analyzeAllStrategies() {
     analyzeVolumeCluster();
@@ -1944,10 +1963,198 @@ function analyzeAllStrategies() {
     analyzeOrderBlocks();
     analyzeLiquiditySweep();
     analyzeInducement();
+    
+    // Track signals for current timeframe
+    updateGlobalSignals();
+}
+
+// Update global signal tracking
+function updateGlobalSignals() {
+    const strategies = [
+        'volume-cluster', 'cumulative-delta', 'vwap-flow', 'liquidity-hunter',
+        'poc', 'delta-divergence', 'absorption', 'iceberg', 'oi-delta',
+        'pressure', 'smart-money', 'bos', 'fvg', 'choch', 'mss',
+        'order-blocks', 'liquidity-sweep', 'inducement'
+    ];
+    
+    // Reset counts for current timeframe
+    globalSignals[CURRENT_TIMEFRAME] = { buy: 0, sell: 0, neutral: 0, total: 18 };
+    
+    strategies.forEach(strategyId => {
+        const signal = getStrategySignal(strategyId);
+        globalSignals[CURRENT_TIMEFRAME][signal]++;
+    });
+    
+    // Log signal comparison
+    console.log(`[${CURRENT_TIMEFRAME}] Buy: ${globalSignals[CURRENT_TIMEFRAME].buy}, Sell: ${globalSignals[CURRENT_TIMEFRAME].sell}, Neutral: ${globalSignals[CURRENT_TIMEFRAME].neutral}`);
+    
+    // Check for strong directional signals
+    checkMultiTimeframeSignals();
+}
+
+// Check if multiple timeframes agree on direction
+function checkMultiTimeframeSignals() {
+    const timeframes = ['15m', '1h', '4h', '1d'];
+    let bullishTFs = 0;
+    let bearishTFs = 0;
+    
+    timeframes.forEach(tf => {
+        const signals = globalSignals[tf];
+        if (signals.buy > signals.sell) bullishTFs++;
+        else if (signals.sell > signals.buy) bearishTFs++;
+    });
+    
+    // Strong consensus notification
+    if (bullishTFs >= 3) {
+        console.log('🚀 STRONG BUY SIGNAL: 3+ timeframes showing bullish consensus!');
+        sendNotificationData('STRONG BUY', `${bullishTFs} timeframes bullish`, 'buy');
+    } else if (bearishTFs >= 3) {
+        console.log('📉 STRONG SELL SIGNAL: 3+ timeframes showing bearish consensus!');
+        sendNotificationData('STRONG SELL', `${bearishTFs} timeframes bearish`, 'sell');
+    }
+    
+    // Current timeframe strong signal
+    const current = globalSignals[CURRENT_TIMEFRAME];
+    if (current.buy >= 12) {
+        console.log(`📊 [${CURRENT_TIMEFRAME}] STRONG BUY: ${current.buy}/18 strategies`);
+        sendNotificationData(`[${CURRENT_TIMEFRAME}] BUY`, `${current.buy}/18 strategies`, 'buy');
+    } else if (current.sell >= 12) {
+        console.log(`📊 [${CURRENT_TIMEFRAME}] STRONG SELL: ${current.sell}/18 strategies`);
+        sendNotificationData(`[${CURRENT_TIMEFRAME}] SELL`, `${current.sell}/18 strategies`, 'sell');
+    }
+}
+
+// Send notification data (will be picked up by mobile app)
+function sendNotificationData(title, message, type) {
+    // Store in localStorage for mobile app to read
+    const notification = {
+        title,
+        message,
+        type,
+        timestamp: Date.now(),
+        symbol: SYMBOL,
+        timeframe: CURRENT_TIMEFRAME
+    };
+    
+    localStorage.setItem('latestSignal', JSON.stringify(notification));
+    
+    // Also store in notification history
+    const history = JSON.parse(localStorage.getItem('notificationHistory') || '[]');
+    history.unshift(notification);
+    if (history.length > 50) history.pop(); // Keep last 50
+    localStorage.setItem('notificationHistory', JSON.stringify(history));
+    
+    // Send to backend server for mobile app
+    sendToBackend(notification);
+    
+    // Show browser notification
+    showBrowserNotification(title, message, type);
+
+    // Update in-page latest signal panel
+    try {
+        const card = document.getElementById('latest-signal-card');
+        const titleEl = document.getElementById('latest-signal-title');
+        const msgEl = document.getElementById('latest-signal-message');
+        const metaEl = document.getElementById('latest-signal-meta');
+        const timeEl = document.getElementById('latest-signal-time');
+
+        if (card && titleEl && msgEl && metaEl && timeEl) {
+            card.classList.remove('buy', 'sell', 'neutral');
+            card.classList.add(type || 'neutral');
+
+            titleEl.textContent = title;
+            msgEl.textContent = message;
+            
+            const date = new Date(notification.timestamp);
+            const timeStr = date.toLocaleTimeString();
+            timeEl.textContent = `${SYMBOL} • ${CURRENT_TIMEFRAME} • ${timeStr}`;
+
+            metaEl.textContent = `Type: ${type?.toUpperCase() || 'INFO'}`;
+        }
+    } catch (e) {
+        console.warn('Error updating latest signal panel:', e);
+    }
+}
+
+// Send signal data to backend server
+async function sendToBackend(latestSignal) {
+    try {
+        const response = await fetch('http://localhost:3000/api/signals/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                timeframe: CURRENT_TIMEFRAME,
+                signals: globalSignals[CURRENT_TIMEFRAME],
+                latestSignal,
+                symbol: SYMBOL
+            })
+        });
+        
+        if (response.ok) {
+            console.log('✅ Signal sent to backend server');
+        }
+    } catch (error) {
+        console.log('⚠️ Backend server not available:', error.message);
+    }
+}
+
+// API endpoint for mobile app to fetch signals
+window.getSignalData = function() {
+    return {
+        currentTimeframe: CURRENT_TIMEFRAME,
+        symbol: SYMBOL,
+        signals: globalSignals,
+        latestSignal: JSON.parse(localStorage.getItem('latestSignal') || 'null'),
+        history: JSON.parse(localStorage.getItem('notificationHistory') || '[]')
+    };
+};
+
+// Browser Notification Support
+async function requestNotificationPermission() {
+    if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                console.log('✅ Browser notifications enabled!');
+                showBrowserNotification('KIROBOT Active', 'Notifications are now enabled!', 'success');
+            }
+        }
+    }
+}
+
+// Show browser notification
+function showBrowserNotification(title, message, type = 'info') {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        const icon = type === 'buy' ? '🚀' : type === 'sell' ? '📉' : '📊';
+        
+        const notification = new Notification(`${icon} ${title}`, {
+            body: message,
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">📊</text></svg>',
+            badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="75" font-size="75">🤖</text></svg>',
+            vibrate: [200, 100, 200],
+            requireInteraction: false,
+            tag: 'kirobot-signal'
+        });
+        
+        notification.onclick = function() {
+            window.focus();
+            this.close();
+        };
+        
+        // Auto close after 10 seconds
+        setTimeout(() => notification.close(), 10000);
+    }
 }
 
 // Start the app
 init();
+
+// Request notification permission on load
+setTimeout(() => {
+    requestNotificationPermission();
+}, 2000);
 
 // Run strategy analysis every 5 seconds
 setInterval(analyzeAllStrategies, 5000);
